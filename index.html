@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGenie: Google Gemini Powered Learning Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to EduGenie 🤖</h1>
+        <p>Your personal AI tutor for learning support!</p>
+
+        <!-- MAIN TASK DROPDOWN - Photo la ketrukkura main requirement ithu than -->
+        <div class="task-selector">
+            <label><strong>Select Task:</strong></label>
+            <select id="taskDropdown" onchange="showTask()">
+                <option value="">-- Choose a task --</option>
+                <option value="qa">Explain, QnA</option>
+                <option value="explain">Explain Topic</option>
+                <option value="summary">Summary</option>
+                <option value="quiz">Quiz</option>
+                <option value="recommend">Recommend Path</option>
+            </select>
+        </div>
+
+        <!-- Q&A Form -->
+        <form id="qaForm" class="task-form" style="display:none;">
+            <label><strong>Ask EduGenie a Question:</strong></label><br><br>
+            <input type="text" id="question" placeholder="Why is the sky blue?" required>
+            <button type="submit">Get Answer</button>
+        </form>
+        <div id="qaResult" class="output"></div>
+
+        <!-- Explanation Form -->
+        <form id="explainForm" class="task-form" style="display:none;">
+            <label><strong>Need an Explanation?:</strong></label><br><br>
+            <input type="text" id="topic" placeholder="Photosynthesis" required>
+            <button type="submit">Explain</button>
+        </form>
+        <div id="explanationResult" class="output"></div>
+
+        <!-- Summary Form -->
+        <form id="summaryForm" class="task-form" style="display:none;">
+            <label><strong>Summarize a Paragraph:</strong></label><br><br>
+            <textarea id="summaryText" placeholder="Paste long content to summarize" required rows="4"></textarea>
+            <button type="submit">Summarize</button>
+        </form>
+        <div id="summaryResult" class="output"></div>
+
+        <!-- Quiz Form -->
+        <form id="quizForm" class="task-form" style="display:none;">
+            <label><strong>Generate a Quiz:</strong></label><br><br>
+            <input type="text" id="quizText" placeholder="Solar System" required>
+            <button type="submit">Generate Quiz</button>
+        </form>
+        <div id="quizResult" class="output"></div>
+
+        <!-- Recommend Form -->
+        <form id="recommendForm" class="task-form" style="display:none;">
+            <label><strong>Recommend Learning Path:</strong></label><br><br>
+            <input type="text" id="recommendText" placeholder="Machine Learning" required>
+            <button type="submit">Recommend Path</button>
+        </form>
+        <div id="recommendResult" class="output"></div>
+    </div>
+
+<script>
+// Task dropdown logic
+function showTask() {
+    const task = document.getElementById('taskDropdown').value;
+    document.querySelectorAll('.task-form').forEach(f => f.style.display = 'none');
+    if(task === 'qa') document.getElementById('qaForm').style.display = 'block';
+    if(task === 'explain') document.getElementById('explainForm').style.display = 'block';
+    if(task === 'summary') document.getElementById('summaryForm').style.display = 'block';
+    if(task === 'quiz') document.getElementById('quizForm').style.display = 'block';
+    if(task === 'recommend') document.getElementById('recommendForm').style.display = 'block';
+}
+
+// Backend connection - main.py ku connect aagum
+document.getElementById('qaForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = document.getElementById('question').value;
+    const res = await fetch(`/qa?question=${q}`);
+    const data = await res.json();
+    document.getElementById('qaResult').innerText = data.answer || data.question;
+});
+document.getElementById('explainForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const topic = document.getElementById('topic').value;
+    const res = await fetch('/explain/', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic})});
+    const data = await res.json();
+    document.getElementById('explanationResult').innerText = data.explanation;
+});
+</script>
+</body>
+</html>
